@@ -23,9 +23,11 @@ class Developer(Employee):
         self.programming_language = programming_language
 
 class TeamLead(Manager, Developer):
-    def __init__(self, name, salary, department, team_size):
-        super().__init__(name, salary, department)
+    def __init__(self, name, salary, department, programming_language, team_size):
+        Employee.__init__(self, name, salary)
+        self.department = department
         self.team_size = team_size
+        self.programming_language = programming_language
 
 
 # Створіть абстрактний клас "Фігура" з абстрактними методами для отримання площі та периметру.
