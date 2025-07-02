@@ -50,7 +50,7 @@ class TestFindHInText(unittest.TestCase):
         self.assertEqual(result, "Accepted!")
 
 #testing uniq_symbols_more_than_10
-#test05-07
+#test09-11
 class TestUniqSymbolsMoreThan10 (unittest.TestCase):
     @patch('builtins.input', return_value='qwertyuiopa')
     def test_uniq_symbols_more_than_10(self, mock_input):
