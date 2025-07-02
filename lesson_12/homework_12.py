@@ -1,11 +1,11 @@
-from function_for_homework_11 import (sum_two_numbers,
+from function_for_homework_12 import (sum_two_numbers,
                                       find_h_in_text,
                                       uniq_symbols_more_than_10,
                                       average,
                                       reverse_string)
-# from function_for_homework_11 import find_h_in_text
+from function_for_homework_12 import find_h_in_text
 from unittest.mock import patch
-# from function_for_homework_11 import uniq_symbols_more_than_10
+from function_for_homework_12 import uniq_symbols_more_than_10
 import unittest
 
 #testing sum_two_numbers
