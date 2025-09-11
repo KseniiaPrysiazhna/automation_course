@@ -30,11 +30,11 @@ pipeline {
             steps {
                 sh """
                     . ${VENV_DIR}/bin/activate
-                    # Пропускаємо тести з API, щоб уникнути 401 помилок
+
                     pytest --junitxml=results.xml -k "not test_cars_api"
                 """
             }
-            // Завжди продовжуємо навіть при помилках тестів
+
             post {
                 always {
                     junit 'results.xml'
@@ -47,7 +47,7 @@ pipeline {
         always {
             // Відправка email після завершення пайплайну
             emailext(
-                to: 'InsertYour@Mail.Here',
+                to: 'kseniia.prysiazhna@gmail.com',
                 subject: "Jenkins Build ${currentBuild.fullDisplayName}",
                 body: "Build finished with status: ${currentBuild.currentResult}. Check console output: ${env.BUILD_URL}"
             )
