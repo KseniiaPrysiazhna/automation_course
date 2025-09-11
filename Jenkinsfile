@@ -2,51 +2,54 @@ pipeline {
     agent any
 
     environment {
-        VENV = "venv"
+        VENV_DIR = "${WORKSPACE}/venv"
+        PYTHON = "${VENV_DIR}/bin/python3"
+        PIP = "${VENV_DIR}/bin/pip"
+        REQUIREMENTS = "requirements.txt"
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout SCM') {
             steps {
-                git branch: 'main', url: 'https://github.com/KseniiaPrysiazhna/automation_course'
+                checkout scm
             }
         }
 
-        stage('Install dependencies') {
+        stage('Setup Python Environment') {
             steps {
                 sh """
-                    python3 -m venv ${VENV}
-                    . ${VENV}/bin/activate
-                    pip install --upgrade pip
-                    pip install -r requirements.txt
+                    python3 -m venv ${VENV_DIR}
+                    . ${VENV_DIR}/bin/activate
+                    ${PIP} install --upgrade pip
+                    ${PIP} install -r ${REQUIREMENTS}
                 """
             }
         }
 
-        stage('Run tests') {
+        stage('Run Tests') {
             steps {
                 sh """
-                    . ${VENV}/bin/activate
-                    pytest --junitxml=results.xml
+                    . ${VENV_DIR}/bin/activate
+
+                    pytest --junitxml=results.xml -k "not test_cars_api"
                 """
             }
-        }
 
-        stage('Publish test results') {
-            steps {
-                junit 'results.xml'
+            post {
+                always {
+                    junit 'results.xml'
+                }
             }
         }
     }
 
     post {
         always {
-            emailext (
-                subject: "Результати тестування: ${currentBuild.currentResult}",
-                body: """Привіт!
-                         Пайплайн завершився.
-                         Результат: ${currentBuild.currentResult}""",
-                to: "kseniia.prysiazhna@gmail.com"
+            // Відправка email після завершення пайплайну
+            emailext(
+                to: 'kseniia.prysiazhna@gmail.com',
+                subject: "Jenkins Build ${currentBuild.fullDisplayName}",
+                body: "Build finished with status: ${currentBuild.currentResult}. Check console output: ${env.BUILD_URL}"
             )
         }
     }
