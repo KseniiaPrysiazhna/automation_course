@@ -1,34 +1,41 @@
 pipeline {
     agent any
 
-    environment {
-        VENV = "venv"
-    }
-
     stages {
-        stage('Checkout') {
+        stage('Checkout SCM') {
             steps {
-                git branch: 'main', url: 'https://github.com/KseniiaPrysiazhna/automation_course'
+                // Клонування репозиторію
+                git branch: 'homework31', url: 'https://github.com/KseniiaPrysiazhna/automation_course.git'
+            }
+        }
+
+        stage('Check Python') {
+            steps {
+                // Перевіряємо Python і pip
+                sh 'python3 --version'
+                sh 'pip --version'
             }
         }
 
         stage('Install dependencies') {
             steps {
-                sh """
-                    python3 -m venv ${VENV}
-                    . ${VENV}/bin/activate
+                // Створюємо віртуальне середовище і встановлюємо пакети
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
                     pip install --upgrade pip
                     pip install -r requirements.txt
-                """
+                '''
             }
         }
 
         stage('Run tests') {
             steps {
-                sh """
-                    . ${VENV}/bin/activate
+                // Активуємо venv і запускаємо pytest
+                sh '''
+                    . venv/bin/activate
                     pytest --junitxml=results.xml
-                """
+                '''
             }
         }
 
@@ -41,13 +48,8 @@ pipeline {
 
     post {
         always {
-            emailext (
-                subject: "Результати тестування: ${currentBuild.currentResult}",
-                body: """Привіт!
-                         Пайплайн завершився.
-                         Результат: ${currentBuild.currentResult}""",
-                to: "kseniia.prysiazhna@gmail.com"
-            )
+            // Можна відправляти email або робити cleanup
+            echo 'Pipeline finished.'
         }
     }
 }
