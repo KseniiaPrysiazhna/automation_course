@@ -13,7 +13,7 @@ pipeline {
             steps {
                 // Перевіряємо Python і pip
                 sh 'python3 --version'
-                sh 'pip --version'
+                sh 'python3 -m pip --version || python3 -m ensurepip --upgrade'
             }
         }
 
@@ -23,8 +23,8 @@ pipeline {
                 sh '''
                     python3 -m venv venv
                     . venv/bin/activate
-                    pip install --upgrade pip
-                    pip install -r requirements.txt
+                    python3 -m pip install --upgrade pip
+                    python3 -m pip install -r requirements.txt
                 '''
             }
         }
@@ -48,7 +48,6 @@ pipeline {
 
     post {
         always {
-            // Можна відправляти email або робити cleanup
             echo 'Pipeline finished.'
         }
     }
